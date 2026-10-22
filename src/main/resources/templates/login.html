@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión - GamerFest</title>
+</head>
+<body>
+    <h1>Iniciar sesión</h1>
+
+    <form th:action="@{/login}" method="post">
+        <div>
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <button type="submit">Ingresar</button>
+    </form>
+
+    <p th:if="${param.error}">Usuario o contraseña incorrectos.</p>
+    <p th:if="${param.logout}">Sesión cerrada correctamente.</p>
+</body>
+</html>

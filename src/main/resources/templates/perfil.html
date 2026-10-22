@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil - GamerFest</title>
+</head>
+<body>
+    <h1>Mi perfil GamerFest</h1>
+    <p>Bienvenido a tu espacio privado.</p>
+    
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Cerrar sesión</button>
+    </form>
+</body>
+</html>
