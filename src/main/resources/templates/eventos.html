@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Eventos - GamerFest</title>
+</head>
+<body>
+
+    <h1>Eventos GamerFest</h1>
+    
+    <h2>Buscar eventos</h2>
+
+    <form th:action="@{/eventos}" method="get">
+
+        <div>
+            <label for="categoria">Categoría:</label>
+            <select id="categoria" name="categoria">
+                <option value="">Todas las categorías</option>
+                <option value="Videojuegos"
+                        th:selected="${categoria == 'Videojuegos'}">
+                    Videojuegos
+                </option>
+                <option value="Esports"
+                        th:selected="${categoria == 'Esports'}">
+                    Esports
+                </option>
+                <option value="Retro"
+                        th:selected="${categoria == 'Retro'}">
+                    Retro
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="fecha">Fecha:</label>
+            <input type="date"
+                id="fecha"
+                name="fecha"
+                th:value="${fecha}">
+        </div>
+
+        <div>
+            <label for="ubicacion">Ubicación:</label>
+            <input type="text"
+                id="ubicacion"
+                name="ubicacion"
+                th:value="${ubicacion}"
+                placeholder="Ej.: Santiago">
+        </div>
+
+        <button type="submit">Buscar eventos</button>
+        <a th:href="@{/eventos}">Limpiar filtros</a>
+
+    </form>
+
+    <div th:each="evento : ${eventos}">
+        <h2 th:text="${evento.nombre}">Nombre del evento</h2>
+
+        <p>
+            Categoría:
+            <span th:text="${evento.categoria}"></span>
+        </p>
+
+        <p>
+            Fecha:
+            <span th:text="${evento.fecha}"></span>
+        </p>
+
+        <p>
+            Ubicación:
+            <span th:text="${evento.ubicacion}"></span>
+        </p>
+
+        <a th:href="@{/eventos/{id}(id=${evento.id})}">
+            Ver detalle del evento
+        </a>
+
+        <hr>
+    </div>
+
+</body>
+</html>

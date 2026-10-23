@@ -6,7 +6,47 @@
     <title>GamerFest</title>
 </head>
 <body>
+
     <h1>Bienvenido a GamerFest</h1>
     <p>Plataforma web de eventos gamer.</p>
+
+    <nav>
+        <a th:href="@{/home}">Inicio</a>
+        |
+        <a th:href="@{/eventos}">Buscar eventos</a>
+        |
+        <a th:href="@{/perfil}">Mi perfil</a>
+        |
+        <a th:href="@{/registro}">Registrarse</a>
+        |
+        <a th:href="@{/login}">Iniciar sesión</a>
+    </nav>
+
+    <h2>Próximos eventos</h2>
+
+    <div th:each="evento : ${eventos}">
+        <h3 th:text="${evento.nombre}">Nombre del evento</h3>
+        <p>
+            Fecha:
+            <span th:text="${evento.fecha}"></span>
+        </p>
+        <p>
+            Ubicación:
+            <span th:text="${evento.ubicacion}"></span>
+        </p>
+    </div>
+
+    <h2>Eventos destacados</h2>
+
+    <div th:each="evento : ${eventos}">
+        <div th:if="${evento.destacado}">
+            <h3 th:text="${evento.nombre}">Nombre del evento</h3>
+            <p th:text="${evento.descripcion}"></p>
+        </div>
+    </div>
+
+    <h2>Publicidad</h2>
+    <p>Espacio publicitario GamerFest - Marcas y accesorios gamer.</p>
+
 </body>
 </html>

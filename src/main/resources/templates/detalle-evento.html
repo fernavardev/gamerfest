@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del evento - GamerFest</title>
+</head>
+<body>
+
+    <h1 th:text="${evento.nombre}">Nombre del evento</h1>
+
+    <h2>Información general</h2>
+
+    <p>
+        Categoría:
+        <span th:text="${evento.categoria}"></span>
+    </p>
+
+    <p>
+        Descripción:
+        <span th:text="${evento.descripcion}"></span>
+    </p>
+
+    <p>
+        Fecha:
+        <span th:text="${evento.fecha}"></span>
+    </p>
+
+    <p>
+        Hora:
+        <span th:text="${evento.hora}"></span>
+    </p>
+
+    <p>
+        Ubicación:
+        <span th:text="${evento.ubicacion}"></span>
+    </p>
+
+    <p>
+        Dirección:
+        <span th:text="${evento.direccion}"></span>
+    </p>
+
+    <h2>Organización y expositores</h2>
+
+    <p>
+        Organizador:
+        <span th:text="${evento.organizador}"></span>
+    </p>
+
+    <p>
+        Expositores:
+        <span th:text="${evento.expositores}"></span>
+    </p>
+
+    <h2>Servicios disponibles</h2>
+
+    <p th:text="${evento.servicios}"></p>
+
+    <a th:href="@{/eventos}">Volver a eventos</a>
+
+</body>
+</html>
