@@ -1,62 +1,41 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Detalle del evento - GamerFest</title>
-</head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Detalle del evento')}"></head>
 <body>
+<div th:replace="~{fragments/layout :: nav}"></div>
 
-    <h1 th:text="${evento.nombre}">Nombre del evento</h1>
+<main class="site-main">
+    <div class="container">
+        <span class="badge" th:text="${evento.categoria}">Categoría</span>
+        <h1 th:text="${evento.nombre}">Nombre del evento</h1>
 
-    <h2>Información general</h2>
+        <div class="grid grid--2" style="margin-top: 1.5rem;">
+            <section class="panel detail-block">
+                <h2>Información general</h2>
+                <p><strong>Descripción:</strong> <span th:text="${evento.descripcion}"></span></p>
+                <p><strong>Fecha:</strong> <span th:text="${evento.fecha}"></span></p>
+                <p><strong>Hora:</strong> <span th:text="${evento.hora}"></span></p>
+                <p><strong>Ubicación:</strong> <span th:text="${evento.ubicacion}"></span></p>
+                <p><strong>Dirección:</strong> <span th:text="${evento.direccion}"></span></p>
+            </section>
 
-    <p>
-        Categoría:
-        <span th:text="${evento.categoria}"></span>
-    </p>
+            <section class="panel detail-block">
+                <h2>Organización y expositores</h2>
+                <p><strong>Organizador:</strong> <span th:text="${evento.organizador}"></span></p>
+                <p><strong>Expositores:</strong> <span th:text="${evento.expositores}"></span></p>
 
-    <p>
-        Descripción:
-        <span th:text="${evento.descripcion}"></span>
-    </p>
+                <h2 style="margin-top: 1.5rem;">Servicios disponibles</h2>
+                <p th:text="${evento.servicios}"></p>
+            </section>
+        </div>
 
-    <p>
-        Fecha:
-        <span th:text="${evento.fecha}"></span>
-    </p>
+        <p style="margin-top: 1.5rem;">
+            <a th:href="@{/eventos}" class="btn btn--ghost">Volver a eventos</a>
+        </p>
+    </div>
+</main>
 
-    <p>
-        Hora:
-        <span th:text="${evento.hora}"></span>
-    </p>
-
-    <p>
-        Ubicación:
-        <span th:text="${evento.ubicacion}"></span>
-    </p>
-
-    <p>
-        Dirección:
-        <span th:text="${evento.direccion}"></span>
-    </p>
-
-    <h2>Organización y expositores</h2>
-
-    <p>
-        Organizador:
-        <span th:text="${evento.organizador}"></span>
-    </p>
-
-    <p>
-        Expositores:
-        <span th:text="${evento.expositores}"></span>
-    </p>
-
-    <h2>Servicios disponibles</h2>
-
-    <p th:text="${evento.servicios}"></p>
-
-    <a th:href="@{/eventos}">Volver a eventos</a>
-
+<div th:replace="~{fragments/layout :: footer}"></div>
 </body>
 </html>

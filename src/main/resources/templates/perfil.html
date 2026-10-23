@@ -1,106 +1,75 @@
-
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Mi perfil - GamerFest</title>
-</head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Mi perfil')}"></head>
 <body>
+<div th:replace="~{fragments/layout :: nav}"></div>
 
-    <h1>Mi perfil GamerFest</h1>
+<main class="site-main">
+    <div class="container">
+        <h1>Mi perfil</h1>
+        <p class="section__intro">Personalizá tu identidad gamer, juegos favoritos y notificaciones.</p>
 
-    <div th:if="${perfil != null}">
+        <div class="profile-layout" th:if="${perfil != null}">
+            <section class="panel">
+                <h2>Tu perfil</h2>
+                <div th:if="${perfil.avatar != null and !perfil.avatar.isBlank()}">
+                    <img class="avatar" th:src="${perfil.avatar}" alt="Avatar del usuario">
+                </div>
+                <div class="avatar-placeholder" th:if="${perfil.avatar == null or perfil.avatar.isBlank()}">
+                    Sin avatar
+                </div>
+                <p style="margin-top: 1rem;"><strong style="color: var(--ink);">Nombre:</strong>
+                    <span th:text="${perfil.nombre}"></span></p>
+                <p><strong style="color: var(--ink);">Usuario:</strong>
+                    <span th:text="${perfil.nombreUsuario}"></span></p>
+                <p><strong style="color: var(--ink);">Correo:</strong>
+                    <span th:text="${perfil.email}"></span></p>
+                <p><strong style="color: var(--ink);">Juegos favoritos:</strong>
+                    <span th:text="${perfil.juegosFavoritos}"></span></p>
+                <p><strong style="color: var(--ink);">Notificaciones:</strong>
+                    <span th:text="${perfil.notificaciones ? 'Activadas' : 'Desactivadas'}"></span></p>
+            </section>
 
-        <p>
-            Nombre:
-            <span th:text="${perfil.nombre}"></span>
-        </p>
-  
-        <p>
-            Nombre de usuario:
-            <span th:text="${perfil.nombreUsuario}"></span>
-        </p>
-
-        <p>
-            Correo:
-            <span th:text="${perfil.email}"></span>
-        </p>
-
-        <div>
-            <p>Avatar:</p>
-
-            <img th:if="${perfil.avatar != null and !perfil.avatar.isBlank()}"
-                th:src="${perfil.avatar}"
-                alt="Avatar del usuario"
-                width="120"
-                height="120">
-                
-            <p th:if="${perfil.avatar == null or perfil.avatar.isBlank()}">
-                Sin avatar configurado.
-            </p>
+            <section class="panel">
+                <h2>Editar perfil</h2>
+                <form th:action="@{/perfil}" method="post" class="form-stack">
+                    <div class="form-field">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" th:value="${perfil.nombre}" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="nombreUsuario">Nombre de usuario</label>
+                        <input type="text" id="nombreUsuario" name="nombreUsuario"
+                               th:value="${perfil.nombreUsuario}" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="avatar">Avatar (URL de imagen)</label>
+                        <input type="url" id="avatar" name="avatar" th:value="${perfil.avatar}"
+                               placeholder="https://...">
+                    </div>
+                    <div class="form-field">
+                        <label for="juegosFavoritos">Juegos favoritos</label>
+                        <input type="text" id="juegosFavoritos" name="juegosFavoritos"
+                               th:value="${perfil.juegosFavoritos}"
+                               placeholder="Ej.: Valorant, Zelda, Street Fighter">
+                    </div>
+                    <div class="form-field form-field--check">
+                        <input type="checkbox" id="notificaciones" name="notificaciones"
+                               th:checked="${perfil.notificaciones}">
+                        <label for="notificaciones">Recibir notificaciones</label>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Guardar cambios</button>
+                </form>
+            </section>
         </div>
 
-        <p>
-            Juegos favoritos:
-            <span th:text="${perfil.juegosFavoritos}"></span>
+        <p class="alert alert--info" th:if="${perfil == null}">
+            Este usuario todavía no tiene un perfil configurado.
         </p>
-
-        <p>
-            Notificaciones:
-            <span th:text="${perfil.notificaciones ? 'Activadas' : 'Desactivadas'}"></span>
-        </p>
-
-        <h2>Editar mi perfil</h2>
-
-        <form th:action="@{/perfil}" method="post">
-
-            <div>
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre"
-                    th:value="${perfil.nombre}" required>
-            </div>
-
-            <div>
-                <label for="nombreUsuario">Nombre de usuario:</label>
-                <input type="text"
-                    id="nombreUsuario"
-                    name="nombreUsuario"
-                    th:value="${perfil.nombreUsuario}"
-                    required>
-            </div>
-
-            <div>
-                <label for="avatar">Avatar (URL de imagen):</label>
-                <input type="url" id="avatar" name="avatar"
-                    th:value="${perfil.avatar}">
-            </div>
-
-            <div>
-                <label for="juegosFavoritos">Juegos favoritos:</label>
-                <input type="text" id="juegosFavoritos" name="juegosFavoritos"
-                    th:value="${perfil.juegosFavoritos}">
-            </div>
-
-            <div>
-                <label for="notificaciones">Recibir notificaciones:</label>
-                <input type="checkbox" id="notificaciones"
-                    name="notificaciones"
-                    th:checked="${perfil.notificaciones}">
-            </div>
-
-            <button type="submit">Guardar cambios</button>
-
-        </form>
-
     </div>
+</main>
 
-    <p th:if="${perfil == null}">
-        Este usuario todavía no tiene un perfil configurado.
-    </p>
-
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Cerrar sesión</button>
-    </form>
-
+<div th:replace="~{fragments/layout :: footer}"></div>
 </body>
 </html>

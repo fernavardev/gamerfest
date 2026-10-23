@@ -1,83 +1,61 @@
-
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Eventos - GamerFest</title>
-</head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Eventos')}"></head>
 <body>
+<div th:replace="~{fragments/layout :: nav}"></div>
 
-    <h1>Eventos GamerFest</h1>
-    
-    <h2>Buscar eventos</h2>
+<main class="site-main">
+    <div class="container">
+        <section class="section">
+            <h1>Eventos GamerFest</h1>
+            <p class="section__intro">Filtra por categoría, fecha o ubicación y revisa el detalle de cada evento.</p>
 
-    <form th:action="@{/eventos}" method="get">
+            <form th:action="@{/eventos}" method="get" class="panel form-filters">
+                <div class="form-field">
+                    <label for="categoria">Categoría</label>
+                    <select id="categoria" name="categoria">
+                        <option value="">Todas las categorías</option>
+                        <option value="Videojuegos" th:selected="${categoria == 'Videojuegos'}">Videojuegos</option>
+                        <option value="Esports" th:selected="${categoria == 'Esports'}">E-Sports</option>
+                        <option value="Retro" th:selected="${categoria == 'Retro'}">Retro</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" th:value="${fecha}">
+                </div>
+                <div class="form-field">
+                    <label for="ubicacion">Ubicación</label>
+                    <input type="text" id="ubicacion" name="ubicacion"
+                           th:value="${ubicacion}" placeholder="Ej.: Santiago">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn--primary">Buscar</button>
+                    <a th:href="@{/eventos}" class="btn btn--ghost">Limpiar</a>
+                </div>
+            </form>
+        </section>
 
-        <div>
-            <label for="categoria">Categoría:</label>
-            <select id="categoria" name="categoria">
-                <option value="">Todas las categorías</option>
-                <option value="Videojuegos"
-                        th:selected="${categoria == 'Videojuegos'}">
-                    Videojuegos
-                </option>
-                <option value="Esports"
-                        th:selected="${categoria == 'Esports'}">
-                    Esports
-                </option>
-                <option value="Retro"
-                        th:selected="${categoria == 'Retro'}">
-                    Retro
-                </option>
-            </select>
-        </div>
-
-        <div>
-            <label for="fecha">Fecha:</label>
-            <input type="date"
-                id="fecha"
-                name="fecha"
-                th:value="${fecha}">
-        </div>
-
-        <div>
-            <label for="ubicacion">Ubicación:</label>
-            <input type="text"
-                id="ubicacion"
-                name="ubicacion"
-                th:value="${ubicacion}"
-                placeholder="Ej.: Santiago">
-        </div>
-
-        <button type="submit">Buscar eventos</button>
-        <a th:href="@{/eventos}">Limpiar filtros</a>
-
-    </form>
-
-    <div th:each="evento : ${eventos}">
-        <h2 th:text="${evento.nombre}">Nombre del evento</h2>
-
-        <p>
-            Categoría:
-            <span th:text="${evento.categoria}"></span>
-        </p>
-
-        <p>
-            Fecha:
-            <span th:text="${evento.fecha}"></span>
-        </p>
-
-        <p>
-            Ubicación:
-            <span th:text="${evento.ubicacion}"></span>
-        </p>
-
-        <a th:href="@{/eventos/{id}(id=${evento.id})}">
-            Ver detalle del evento
-        </a>
-
-        <hr>
+        <section class="section">
+            <div class="grid grid--2" th:if="${!eventos.isEmpty()}">
+                <article class="card" th:each="evento : ${eventos}">
+                    <span class="badge" th:text="${evento.categoria}">Categoría</span>
+                    <h2 th:text="${evento.nombre}">Nombre del evento</h2>
+                    <div class="card__meta">
+                        <span th:text="${evento.fecha}">Fecha</span>
+                        <span th:text="${evento.ubicacion}">Ubicación</span>
+                    </div>
+                    <a class="btn btn--ghost" th:href="@{/eventos/{id}(id=${evento.id})}">Ver detalle</a>
+                </article>
+            </div>
+            <p class="empty-state panel" th:if="${eventos.isEmpty()}">
+                No hay eventos con esos filtros. Prueba limpiar la búsqueda.
+            </p>
+        </section>
     </div>
+</main>
 
+<div th:replace="~{fragments/layout :: footer}"></div>
 </body>
 </html>
