@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · GamerFest'">GamerFest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header th:fragment="nav" class="site-header">
+    <div class="site-header__inner">
+        <a th:href="@{/home}" class="brand">Gamer<span>Fest</span></a>
+        <nav class="nav" aria-label="Principal">
+            <a th:href="@{/home}">Inicio</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/eventos}">Eventos</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/perfil}">Mi perfil</a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/registro}">Registrarse</a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Iniciar sesión</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn--danger" style="padding: 0.35rem 0.9rem; font-size: 0.85rem;">Salir</button>
+            </form>
+        </nav>
+    </div>
+</header>
+
+<footer th:fragment="footer" class="site-footer">
+    <div class="site-footer__inner">
+        <p>GamerFest — eventos, comunidad y torneos para gamers.</p>
+    </div>
+</footer>
+</body>
+</html>
