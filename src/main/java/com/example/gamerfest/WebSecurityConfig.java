@@ -10,8 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -24,25 +22,9 @@ public class WebSecurityConfig {
             JwtAuthorizationFilter jwtAuthorizationFilter,
             JwtCookieService jwtCookieService) throws Exception {
 
-        CsrfTokenRequestAttributeHandler requestHandler =
-                new CsrfTokenRequestAttributeHandler();
-        requestHandler.setCsrfRequestAttributeName("_csrf");
-
         http
                 .userDetailsService(userDetailsService)
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(
-                                CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers(request ->
-                                "POST".equalsIgnoreCase(request.getMethod())
-                                        && "/login".equals(request.getServletPath())
-                                        && request.getContentType() != null
-                                        && request.getContentType()
-                                        .toLowerCase()
-                                        .startsWith(
-                                                org.springframework.http.MediaType
-                                                        .APPLICATION_JSON_VALUE)))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
