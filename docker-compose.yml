@@ -1,6 +1,34 @@
 services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: gamerfest
+      MYSQL_USER: gamerfest
+      MYSQL_PASSWORD: gamerfest123
+      MYSQL_ROOT_PASSWORD: rootgamerfest
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootgamerfest"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
   gamerfest:
     build: .
     ports:
       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/gamerfest
+      SPRING_DATASOURCE_USERNAME: gamerfest
+      SPRING_DATASOURCE_PASSWORD: gamerfest123
+    depends_on:
+      mysql:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  mysql_data:
