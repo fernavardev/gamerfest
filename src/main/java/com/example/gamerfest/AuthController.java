@@ -3,49 +3,70 @@ package com.example.gamerfest;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@RestController
+import jakarta.servlet.http.HttpServletResponse;
+
+@Controller
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
     private final JwtService jwtService;
+    private final JwtCookieService jwtCookieService;
 
     public AuthController(
-            UsuarioRepository usuarioRepository,
-            PasswordEncoder passwordEncoder,
-            JwtService jwtService) {
+            AuthService authService,
+            JwtService jwtService,
+            JwtCookieService jwtCookieService) {
 
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.authService = authService;
         this.jwtService = jwtService;
+        this.jwtCookieService = jwtCookieService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestBody Map<String, String> credenciales) {
+    @PostMapping(
+            value = "/login",
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String loginForm(
+            @RequestParam String username,
+            @RequestParam String password,
+            HttpServletResponse response) {
 
-        String username = credenciales.get("username");
-        String password = credenciales.get("password");
+        Usuario usuario = authService.autenticar(username, password);
+        if (usuario == null) {
+            return "redirect:/login?error";
+        }
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElse(null);
+        String token = jwtService.generarToken(usuario);
+        jwtCookieService.escribirToken(response, token);
+        return "redirect:/eventos";
+    }
 
-        if (usuario == null ||
-                password == null ||
-                !passwordEncoder.matches(password, usuario.getPassword())) {
+    @PostMapping(
+            value = "/login",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> loginJson(
+            @RequestBody Map<String, String> credenciales,
+            HttpServletResponse response) {
 
+        Usuario usuario = authService.autenticar(
+                credenciales.get("username"),
+                credenciales.get("password"));
+
+        if (usuario == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas"));
         }
 
         String token = jwtService.generarToken(usuario);
-
+        jwtCookieService.escribirToken(response, token);
         return ResponseEntity.ok(Map.of("token", token));
     }
 }

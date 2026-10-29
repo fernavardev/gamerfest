@@ -13,6 +13,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,17 +38,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authorization = request.getHeader(
-                JwtConstants.HEADER_AUTHORIZATION_KEY
-        );
+        String token = extraerToken(request);
 
-        if (authorization != null &&
-                authorization.startsWith(JwtConstants.TOKEN_BEARER_PREFIX)) {
-
-            String token = authorization.substring(
-                    JwtConstants.TOKEN_BEARER_PREFIX.length()
-            );
-
+        if (token != null) {
             try {
                 Claims claims = jwtService.validarToken(token);
 
@@ -77,5 +70,34 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String extraerToken(HttpServletRequest request) {
+        String authorization = request.getHeader(
+                JwtConstants.HEADER_AUTHORIZATION_KEY
+        );
+
+        if (authorization != null &&
+                authorization.startsWith(JwtConstants.TOKEN_BEARER_PREFIX)) {
+            return authorization.substring(
+                    JwtConstants.TOKEN_BEARER_PREFIX.length()
+            );
+        }
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+
+        for (Cookie cookie : cookies) {
+            if (JwtConstants.TOKEN_COOKIE_NAME.equals(cookie.getName())) {
+                String value = cookie.getValue();
+                if (value != null && !value.isBlank()) {
+                    return value;
+                }
+            }
+        }
+
+        return null;
     }
 }

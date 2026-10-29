@@ -12,6 +12,8 @@ public final class JwtConstants {
 
     public static final String TOKEN_BEARER_PREFIX = "Bearer ";
 
+    public static final String TOKEN_COOKIE_NAME = "gamerfest_token";
+
     public static final String TOKEN_ISSUER = "GamerFest";
 
     public static final long TOKEN_EXPIRATION_TIME = 3_600_000L;
