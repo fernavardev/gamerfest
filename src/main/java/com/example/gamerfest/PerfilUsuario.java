@@ -1,7 +1,19 @@
 
 package com.example.gamerfest;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "perfiles")
 public class PerfilUsuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String email;
     private String nombreUsuario;
@@ -10,6 +22,9 @@ public class PerfilUsuario {
     private String juegosFavoritos;
     private boolean notificaciones;
 
+    public PerfilUsuario() {
+    }
+
     public PerfilUsuario(String email, String nombre) {
         this.email = email;
         this.nombreUsuario = nombre;
@@ -17,6 +32,14 @@ public class PerfilUsuario {
         this.avatar = "";
         this.juegosFavoritos = "";
         this.notificaciones = true;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {

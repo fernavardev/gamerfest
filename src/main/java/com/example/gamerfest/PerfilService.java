@@ -1,26 +1,28 @@
-package com.example.gamerfest;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+package com.example.gamerfest;
 
 import org.springframework.stereotype.Service;
 
 @Service
 public class PerfilService {
 
-    private final Map<String, PerfilUsuario> perfiles = new ConcurrentHashMap<>();
+    private final PerfilRepository perfilRepository;
 
-    public PerfilService() {
-        guardar(new PerfilUsuario("fernando", "Fernando"));
-        guardar(new PerfilUsuario("trinidad", "Trinidad"));
-        guardar(new PerfilUsuario("admin", "Administrador"));
+    public PerfilService(PerfilRepository perfilRepository) {
+        this.perfilRepository = perfilRepository;
     }
 
     public void guardar(PerfilUsuario perfil) {
-        perfiles.put(perfil.getEmail(), perfil);
+        PerfilUsuario existente = perfilRepository.findByEmail(perfil.getEmail());
+
+        if (existente != null) {
+            perfil.setId(existente.getId());
+        }
+
+        perfilRepository.save(perfil);
     }
 
     public PerfilUsuario buscarPorEmail(String email) {
-        return perfiles.get(email);
+        return perfilRepository.findByEmail(email);
     }
 }

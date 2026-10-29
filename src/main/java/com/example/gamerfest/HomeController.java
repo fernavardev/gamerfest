@@ -3,10 +3,7 @@ package com.example.gamerfest;
 import java.time.LocalDate;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,23 +13,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class HomeController {
 
-    private final InMemoryUserDetailsManager usuarios;
+    private final UsuarioRepository usuarios;
     private final PasswordEncoder passwordEncoder;
     private final PerfilService perfilService;
+    private final EventoService eventoService;
 
-    public HomeController(InMemoryUserDetailsManager usuarios,
-                        PasswordEncoder passwordEncoder,
-                        PerfilService perfilService) {
+    public HomeController(UsuarioRepository usuarios,
+            PasswordEncoder passwordEncoder,
+            PerfilService perfilService,
+            EventoService eventoService) {
         this.usuarios = usuarios;
         this.passwordEncoder = passwordEncoder;
         this.perfilService = perfilService;
+        this.eventoService = eventoService;
     }
 
-    @GetMapping({"/", "/home"})
+    @GetMapping({ "/", "/home" })
     public String home(Model model) {
 
         model.addAttribute("eventos",
-                EventoController.eventos.stream()
+                eventoService.listarTodos().stream()
                         .filter(evento -> !evento.getFecha()
                                 .isBefore(LocalDate.now()))
                         .toList());
@@ -49,7 +49,7 @@ public class HomeController {
     public String registro() {
         return "registro";
     }
-    
+
     @PostMapping("/registro")
     public String registrarUsuario(
             @RequestParam String nombre,
@@ -57,17 +57,18 @@ public class HomeController {
             @RequestParam String password,
             Model model) {
 
-        if (usuarios.userExists(email)) {
+        if (usuarios.findByUsername(email).isPresent()) {
             model.addAttribute("error", "El correo ya está registrado.");
             return "registro";
         }
 
-        UserDetails nuevoUsuario = User.withUsername(email)
-                .password(passwordEncoder.encode(password))
-                .roles("USER")
-                .build();
+        Usuario nuevoUsuario = new Usuario(
+                email,
+                passwordEncoder.encode(password),
+                "USER");
 
-        usuarios.createUser(nuevoUsuario);
+        usuarios.save(nuevoUsuario);
+
         PerfilUsuario nuevoPerfil = new PerfilUsuario(email, nombre);
         perfilService.guardar(nuevoPerfil);
 
@@ -84,7 +85,7 @@ public class HomeController {
 
         return "perfil";
     }
-    
+
     @PostMapping("/perfil")
     public String actualizarPerfil(
             Authentication authentication,

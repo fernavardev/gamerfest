@@ -1,58 +1,49 @@
-
 package com.example.gamerfest;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            UserDetailsService userDetailsService,
+            JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
+
         http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/home", "/login", "/registro", "/css/**", "/images/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .permitAll()
-            );
+                .userDetailsService(userDetailsService)
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/",
+                                "/home",
+                                "/login",
+                                "/registro",
+                                "/css/**",
+                                "/images/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(
+                        jwtAuthorizationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails usuario1 = User.withUsername("fernando")
-            .password(passwordEncoder.encode("123456"))
-            .roles("USER")
-            .build();
-
-        UserDetails usuario2 = User.withUsername("trinidad")
-            .password(passwordEncoder.encode("123456"))
-            .roles("USER")
-            .build();
-
-        UserDetails administrador = User.withUsername("admin")
-            .password(passwordEncoder.encode("123456"))
-            .roles("ADMIN")
-            .build();
-
-        return new InMemoryUserDetailsManager(usuario1, usuario2, administrador);
     }
 
     @Bean
