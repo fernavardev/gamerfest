@@ -23,6 +23,7 @@ public class WebSecurityConfig {
                                 "/registro",
                                 "/eventos",
                                 "/css/**",
+                                "/fonts/**",
                                 "/images/**")
                         .permitAll()
                         .anyRequest().authenticated())
