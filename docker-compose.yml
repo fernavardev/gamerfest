@@ -17,5 +17,28 @@ services:
       retries: 20
     restart: unless-stopped
 
+  backend:
+    build: ./backend
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/gamerfest
+      SPRING_DATASOURCE_USERNAME: gamerfest
+      SPRING_DATASOURCE_PASSWORD: gamerfest123
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    environment:
+      BACKEND_URL: http://backend:8081
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   mysql_data:
