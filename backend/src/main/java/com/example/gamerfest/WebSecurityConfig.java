@@ -19,31 +19,23 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             UserDetailsService userDetailsService,
-            JwtAuthorizationFilter jwtAuthorizationFilter,
-            JwtCookieService jwtCookieService) throws Exception {
+            JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
 
         http
                 .userDetailsService(userDetailsService)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
-                                "/home",
                                 "/login",
                                 "/registro",
-                                "/css/**",
-                                "/images/**")
+                                "/api/eventos",
+                                "/api/eventos/**")
                         .permitAll()
                         .anyRequest().authenticated())
 
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .addLogoutHandler((request, response, authentication) ->
-                                jwtCookieService.borrarToken(response))
-                        .permitAll())
+                .logout(logout -> logout.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(

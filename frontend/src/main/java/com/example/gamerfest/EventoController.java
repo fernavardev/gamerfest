@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class EventoController {
 
-    private final EventoService eventoService;
+    private final BackendApiClient backendApiClient;
 
-    public EventoController(EventoService eventoService) {
-        this.eventoService = eventoService;
+    public EventoController(BackendApiClient backendApiClient) {
+        this.backendApiClient = backendApiClient;
     }
 
     @GetMapping("/eventos")
@@ -29,7 +29,7 @@ public class EventoController {
             @RequestParam(required = false) String ubicacion,
             Model model) {
 
-        List<Evento> resultados = eventoService.listarTodos();
+        List<Evento> resultados = backendApiClient.listarEventos();
 
         if (categoria != null && !categoria.isBlank()) {
             resultados = resultados.stream()
@@ -65,7 +65,7 @@ public class EventoController {
             @PathVariable Long id,
             Model model) {
 
-        Evento evento = eventoService.buscarPorId(id).orElse(null);
+        Evento evento = backendApiClient.buscarEventoPorId(id);
 
         if (evento == null) {
             return "redirect:/eventos";

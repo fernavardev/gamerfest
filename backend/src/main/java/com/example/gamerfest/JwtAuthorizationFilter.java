@@ -13,7 +13,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -51,19 +50,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     UserDetails usuario = userDetailsService
                             .loadUserByUsername(username);
 
-                    UsernamePasswordAuthenticationToken autenticacion =
-                            new UsernamePasswordAuthenticationToken(
-                                    usuario,
-                                    null,
-                                    usuario.getAuthorities()
-                            );
+                    UsernamePasswordAuthenticationToken autenticacion = new UsernamePasswordAuthenticationToken(
+                            usuario,
+                            null,
+                            usuario.getAuthorities());
 
                     SecurityContextHolder.getContext()
                             .setAuthentication(autenticacion);
                 }
 
-            } catch (JwtException |
-                     org.springframework.security.core.AuthenticationException e) {
+            } catch (JwtException | org.springframework.security.core.AuthenticationException e) {
 
                 SecurityContextHolder.clearContext();
             }
@@ -74,30 +70,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private String extraerToken(HttpServletRequest request) {
         String authorization = request.getHeader(
-                JwtConstants.HEADER_AUTHORIZATION_KEY
-        );
+                JwtConstants.HEADER_AUTHORIZATION_KEY);
 
         if (authorization != null &&
                 authorization.startsWith(JwtConstants.TOKEN_BEARER_PREFIX)) {
             return authorization.substring(
-                    JwtConstants.TOKEN_BEARER_PREFIX.length()
-            );
-        }
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            return null;
-        }
-
-        for (Cookie cookie : cookies) {
-            if (JwtConstants.TOKEN_COOKIE_NAME.equals(cookie.getName())) {
-                String value = cookie.getValue();
-                if (value != null && !value.isBlank()) {
-                    return value;
-                }
-            }
+                    JwtConstants.TOKEN_BEARER_PREFIX.length());
         }
 
         return null;
     }
+
 }
