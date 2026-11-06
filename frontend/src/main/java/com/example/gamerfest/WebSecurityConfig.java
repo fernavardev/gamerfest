@@ -35,7 +35,20 @@ public class WebSecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
-                        .permitAll());
+                        .permitAll())
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                "default-src 'self'; "
+                                        + "script-src 'self'; "
+                                        + "style-src 'self'; "
+                                        + "img-src 'self' data:; "
+                                        + "font-src 'self'; "
+                                        + "connect-src 'self'; "
+                                        + "frame-ancestors 'none'; "
+                                        + "form-action 'self'; "
+                                        + "base-uri 'self'; "
+                                        + "object-src 'none'"))
+                        .frameOptions(frame -> frame.deny()));
 
         return http.build();
     }
