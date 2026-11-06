@@ -34,6 +34,14 @@ public class RegistroController {
         String email = datos.get("email");
         String password = datos.get("password");
 
+        // validacion de formato del correo antes de consultar la base de datos
+        if (email == null || !email.matches(
+                "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Formato de correo inválido."));
+        }
+
         if (usuarios.findByUsername(email).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "El correo ya está registrado."));
