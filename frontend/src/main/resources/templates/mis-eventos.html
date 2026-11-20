@@ -9,85 +9,17 @@
 
 <main class="site-main">
     <div class="container">
-        <h1>Mis eventos</h1>
-        <p class="section__intro">Creá eventos y agregá fotos o videos a los que publicaste.</p>
+        <div class="section-header">
+            <div>
+                <h1>Mis eventos</h1>
+                <p class="section__intro">Administrá tus eventos y agregá fotos o videos.</p>
+            </div>
+            <a th:href="@{/mis-eventos/nuevo}" class="btn btn--primary">Crear evento</a>
+        </div>
 
         <p class="alert alert--info" th:if="${mensaje != null}" th:text="${mensaje}"></p>
 
-        <section class="section panel">
-            <h2>Crear evento</h2>
-            <form th:action="@{/mis-eventos}" method="post" class="form-stack">
-                <div class="form-filters">
-                    <div class="form-field">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="categoria">Categoría</label>
-                        <select id="categoria" name="categoria" required>
-                            <option value="Videojuegos">Videojuegos</option>
-                            <option value="Esports">E-Sports</option>
-                            <option value="Retro">Retro</option>
-                        </select>
-                    </div>
-                    <div class="form-field">
-                        <label for="videojuego">Videojuego</label>
-                        <input type="text" id="videojuego" name="videojuego" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="fecha">Fecha</label>
-                        <input type="date" id="fecha" name="fecha" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="hora">Hora</label>
-                        <input type="time" id="hora" name="hora" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="modalidad">Modalidad</label>
-                        <select id="modalidad" name="modalidad" required>
-                            <option value="PRESENCIAL">Presencial</option>
-                            <option value="ONLINE">Online</option>
-                        </select>
-                    </div>
-                    <div class="form-field">
-                        <label for="pais">País</label>
-                        <input type="text" id="pais" name="pais" value="Chile" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="ciudad">Ciudad</label>
-                        <input type="text" id="ciudad" name="ciudad" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="direccion">Dirección / recinto</label>
-                        <input type="text" id="direccion" name="direccion" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="organizador">Organizador</label>
-                        <input type="text" id="organizador" name="organizador" required>
-                    </div>
-                </div>
-                <div class="form-field">
-                    <label for="descripcion">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
-                </div>
-                <div class="form-field">
-                    <label for="servicios">Servicios</label>
-                    <textarea id="servicios" name="servicios" rows="2"></textarea>
-                </div>
-                <div class="form-field">
-                    <label for="expositores">Expositores</label>
-                    <textarea id="expositores" name="expositores" rows="2"></textarea>
-                </div>
-                <div class="form-field form-field--check">
-                    <input type="checkbox" id="destacado" name="destacado" value="true">
-                    <label for="destacado">Marcar como destacado</label>
-                </div>
-                <button type="submit" class="btn btn--primary">Crear evento</button>
-            </form>
-        </section>
-
         <section class="section">
-            <h2>Eventos publicados</h2>
             <div class="grid grid--2" th:if="${!eventos.isEmpty()}">
                 <article class="card" th:each="evento : ${eventos}">
                     <span class="badge" th:text="${evento.categoria}">Categoría</span>
@@ -145,6 +77,7 @@
             </div>
             <p class="empty-state panel" th:if="${eventos.isEmpty()}">
                 Todavía no publicaste eventos.
+                <a th:href="@{/mis-eventos/nuevo}">Creá el primero</a>.
             </p>
         </section>
     </div>

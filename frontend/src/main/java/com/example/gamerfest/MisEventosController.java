@@ -51,7 +51,12 @@ public class MisEventosController {
         return "mis-eventos";
     }
 
-    @PostMapping("/mis-eventos")
+    @GetMapping("/mis-eventos/nuevo")
+    public String formularioCrearEvento() {
+        return "crear-evento";
+    }
+
+    @PostMapping("/mis-eventos/nuevo")
     public String crearEvento(
             HttpSession session,
             @RequestParam String nombre,

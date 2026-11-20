@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Crear evento')}">
+    <title>Crear evento</title>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: nav}"></div>
+
+<main class="site-main">
+    <div class="container">
+        <h1>Crear evento</h1>
+        <p class="section__intro">Completá los datos para publicar un nuevo evento.</p>
+
+        <section class="section panel">
+            <form th:action="@{/mis-eventos/nuevo}" method="post" class="form-stack">
+                <div class="form-filters">
+                    <div class="form-field">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="categoria">Categoría</label>
+                        <select id="categoria" name="categoria" required>
+                            <option value="Videojuegos">Videojuegos</option>
+                            <option value="Esports">E-Sports</option>
+                            <option value="Retro">Retro</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="videojuego">Videojuego</label>
+                        <input type="text" id="videojuego" name="videojuego" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="fecha">Fecha</label>
+                        <input type="date" id="fecha" name="fecha" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="hora">Hora</label>
+                        <input type="time" id="hora" name="hora" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="modalidad">Modalidad</label>
+                        <select id="modalidad" name="modalidad" required>
+                            <option value="PRESENCIAL">Presencial</option>
+                            <option value="ONLINE">Online</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="pais">País</label>
+                        <input type="text" id="pais" name="pais" value="Chile" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="ciudad">Ciudad</label>
+                        <input type="text" id="ciudad" name="ciudad" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="direccion">Dirección / recinto</label>
+                        <input type="text" id="direccion" name="direccion" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="organizador">Organizador</label>
+                        <input type="text" id="organizador" name="organizador" required>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="servicios">Servicios</label>
+                    <textarea id="servicios" name="servicios" rows="2"></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="expositores">Expositores</label>
+                    <textarea id="expositores" name="expositores" rows="2"></textarea>
+                </div>
+                <div class="form-field form-field--check">
+                    <input type="checkbox" id="destacado" name="destacado" value="true">
+                    <label for="destacado">Marcar como destacado</label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn--primary">Publicar evento</button>
+                    <a th:href="@{/mis-eventos}" class="btn btn--ghost">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>
