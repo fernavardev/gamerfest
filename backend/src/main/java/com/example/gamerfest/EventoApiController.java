@@ -90,4 +90,24 @@ public class EventoApiController {
         eventoService.eliminarMedia(id, mediaId, authentication.getName());
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/comentarios")
+    public List<ComentarioEvento> listarComentarios(@PathVariable Long id) {
+        return eventoService.listarComentarios(id);
+    }
+
+    @PostMapping("/{id}/comentarios")
+    public ResponseEntity<ComentarioEvento> agregarComentario(
+            Authentication authentication,
+            @PathVariable Long id,
+            @RequestBody ComentarioRequest request) {
+
+        ComentarioEvento comentario = eventoService.agregarComentario(
+                id,
+                authentication.getName(),
+                request.getTexto(),
+                request.getValoracion());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(comentario);
+    }
 }

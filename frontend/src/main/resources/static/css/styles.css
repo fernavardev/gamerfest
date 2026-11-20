@@ -532,6 +532,20 @@ p { margin: 0 0 1rem; color: var(--muted); }
   align-items: center;
 }
 
+.comments-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.comment-card p {
+  margin: 0.5rem 0 0;
+}
+
+.comment-date {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
 .media-grid {
   display: grid;
   gap: 0.75rem;

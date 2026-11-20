@@ -11,6 +11,16 @@
     <div class="container">
         <span class="badge" th:text="${evento.categoria}">Categoría</span>
         <h1 th:text="${evento.nombre}">Nombre del evento</h1>
+        <p th:if="${promedioValoracion != null}" class="section__intro">
+            Valoración promedio:
+            <strong th:text="${promedioValoracion}">0</strong> / 5
+            (<span th:text="${comentarios.size()}">0</span> opiniones)
+        </p>
+        <p th:if="${promedioValoracion == null}" class="section__intro">
+            Todavía no hay valoraciones.
+        </p>
+
+        <p class="alert alert--info" th:if="${mensaje != null}" th:text="${mensaje}"></p>
 
         <section class="section" th:if="${media != null and !media.isEmpty()}" style="margin-top: 1.5rem;">
             <h2>Fotos y videos</h2>
@@ -50,6 +60,51 @@
                 <p th:text="${evento.servicios}"></p>
             </section>
         </div>
+
+        <section class="section" style="margin-top: 2rem;">
+            <h2>Comentarios y valoraciones</h2>
+
+            <div class="panel" style="margin-bottom: 1.25rem;">
+                <h3>Deja tu opinión</h3>
+                <form th:action="@{/eventos/{id}/comentarios(id=${evento.id})}"
+                      method="post"
+                      class="form-stack">
+                    <div class="form-field">
+                        <label for="valoracion">Valoración</label>
+                        <select id="valoracion" name="valoracion" required>
+                            <option value="5">5 — Excelente</option>
+                            <option value="4">4 — Muy bueno</option>
+                            <option value="3" selected>3 — Bueno</option>
+                            <option value="2">2 — Regular</option>
+                            <option value="1">1 — Malo</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="texto">Comentario</label>
+                        <textarea id="texto" name="texto" rows="3" required
+                                  placeholder="Contá tu experiencia en el evento"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Publicar comentario</button>
+                </form>
+            </div>
+
+            <div th:if="${comentarios != null and !comentarios.isEmpty()}" class="comments-list">
+                <article class="panel comment-card" th:each="comentario : ${comentarios}">
+                    <div class="card__meta">
+                        <strong th:text="${comentario.autorEmail}">autor</strong>
+                        <span th:text="${comentario.valoracion} + ' / 5'">3 / 5</span>
+                    </div>
+                    <p th:text="${comentario.texto}">Comentario</p>
+                    <p class="comment-date"
+                       th:text="${#temporals.format(comentario.creadoEn, 'dd/MM/yyyy HH:mm')}">
+                        fecha
+                    </p>
+                </article>
+            </div>
+            <p class="empty-state panel" th:if="${comentarios == null or comentarios.isEmpty()}">
+                Sé la primera persona en comentar este evento.
+            </p>
+        </section>
 
         <p style="margin-top: 1.5rem;">
             <a th:href="@{/eventos}" class="btn btn--ghost">Volver a eventos</a>

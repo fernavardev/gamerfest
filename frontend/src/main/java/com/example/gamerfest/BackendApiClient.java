@@ -223,6 +223,40 @@ public class BackendApiClient {
                 .toBodilessEntity();
     }
 
+    public List<ComentarioEvento> listarComentarios(
+            HttpSession session,
+            Long eventoId) {
+
+        String token = tokenStore.requireToken(session);
+
+        ComentarioEvento[] comentarios = restClient.get()
+                .uri("/api/eventos/{id}/comentarios", eventoId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .retrieve()
+                .body(ComentarioEvento[].class);
+
+        return comentarios == null ? List.of() : Arrays.asList(comentarios);
+    }
+
+    public ComentarioEvento agregarComentario(
+            HttpSession session,
+            Long eventoId,
+            String texto,
+            int valoracion) {
+
+        String token = tokenStore.requireToken(session);
+
+        return restClient.post()
+                .uri("/api/eventos/{id}/comentarios", eventoId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of(
+                        "texto", texto,
+                        "valoracion", valoracion))
+                .retrieve()
+                .body(ComentarioEvento.class);
+    }
+
     public void actualizarPerfil(
             HttpSession session,
             String nombre,

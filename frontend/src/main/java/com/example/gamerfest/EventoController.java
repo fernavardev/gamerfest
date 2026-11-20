@@ -10,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -72,10 +74,37 @@ public class EventoController {
             media.add(new EventoMediaVista(item, urlPublica(item.getRuta())));
         }
 
+        List<ComentarioEvento> comentarios =
+                backendApiClient.listarComentarios(session, id);
+        Double promedio = null;
+        if (!comentarios.isEmpty()) {
+            promedio = Math.round(
+                    comentarios.stream()
+                            .mapToInt(ComentarioEvento::getValoracion)
+                            .average()
+                            .orElse(0) * 10.0) / 10.0;
+        }
+
         model.addAttribute("evento", evento);
         model.addAttribute("media", media);
+        model.addAttribute("comentarios", comentarios);
+        model.addAttribute("promedioValoracion", promedio);
 
         return "detalle-evento";
+    }
+
+    @PostMapping("/eventos/{id}/comentarios")
+    public String comentarEvento(
+            @PathVariable Long id,
+            HttpSession session,
+            @RequestParam String texto,
+            @RequestParam int valoracion,
+            RedirectAttributes redirectAttributes) {
+
+        backendApiClient.agregarComentario(session, id, texto, valoracion);
+        redirectAttributes.addFlashAttribute(
+                "mensaje", "Comentario publicado.");
+        return "redirect:/eventos/" + id;
     }
 
     private String urlPublica(String ruta) {

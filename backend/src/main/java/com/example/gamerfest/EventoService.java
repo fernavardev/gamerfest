@@ -15,14 +15,17 @@ public class EventoService {
 
     private final EventoRepository eventoRepository;
     private final EventoMediaRepository eventoMediaRepository;
+    private final ComentarioEventoRepository comentarioEventoRepository;
     private final AlmacenamientoService almacenamientoService;
 
     public EventoService(
             EventoRepository eventoRepository,
             EventoMediaRepository eventoMediaRepository,
+            ComentarioEventoRepository comentarioEventoRepository,
             AlmacenamientoService almacenamientoService) {
         this.eventoRepository = eventoRepository;
         this.eventoMediaRepository = eventoMediaRepository;
+        this.comentarioEventoRepository = comentarioEventoRepository;
         this.almacenamientoService = almacenamientoService;
     }
 
@@ -124,6 +127,48 @@ public class EventoService {
         }
 
         eventoMediaRepository.delete(media);
+    }
+
+    public List<ComentarioEvento> listarComentarios(Long eventoId) {
+        exigirEvento(eventoId);
+        return comentarioEventoRepository.findByEventoIdOrderByCreadoEnDesc(eventoId);
+    }
+
+    public Double promedioValoracion(Long eventoId) {
+        List<ComentarioEvento> comentarios = listarComentarios(eventoId);
+        if (comentarios.isEmpty()) {
+            return null;
+        }
+        double suma = comentarios.stream()
+                .mapToInt(ComentarioEvento::getValoracion)
+                .average()
+                .orElse(0);
+        return Math.round(suma * 10.0) / 10.0;
+    }
+
+    public ComentarioEvento agregarComentario(
+            Long eventoId,
+            String autorEmail,
+            String texto,
+            int valoracion) {
+
+        if (texto == null || texto.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "El comentario no puede estar vacío");
+        }
+        if (valoracion < 1 || valoracion > 5) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "La valoración debe ser entre 1 y 5");
+        }
+
+        Evento evento = exigirEvento(eventoId);
+        ComentarioEvento comentario = new ComentarioEvento(
+                evento,
+                autorEmail,
+                texto.trim(),
+                valoracion);
+
+        return comentarioEventoRepository.save(comentario);
     }
 
     public void inicializarEventos() {
