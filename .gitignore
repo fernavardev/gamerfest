@@ -35,3 +35,7 @@ build/
 ### Secrets / entorno local ###
 .env
 **/application-local.properties
+
+### Uploads locales (Docker usa volumen uploads_data) ###
+uploads/
+backend/uploads/
