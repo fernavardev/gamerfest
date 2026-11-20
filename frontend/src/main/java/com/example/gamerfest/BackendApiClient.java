@@ -6,10 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -142,22 +146,39 @@ public class BackendApiClient {
             HttpSession session,
             String nombre,
             String nombreUsuario,
-            String avatar,
+            MultipartFile avatar,
             String juegosFavoritos,
             boolean notificaciones) {
 
         String token = tokenStore.requireToken(session);
 
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("nombre", nombre);
+        body.add("nombreUsuario", nombreUsuario);
+        body.add("juegosFavoritos", juegosFavoritos == null ? "" : juegosFavoritos);
+        body.add("notificaciones", String.valueOf(notificaciones));
+
+        if (avatar != null && !avatar.isEmpty()) {
+            try {
+                ByteArrayResource recurso = new ByteArrayResource(
+                        avatar.getBytes()) {
+                    @Override
+                    public String getFilename() {
+                        return avatar.getOriginalFilename();
+                    }
+                };
+                body.add("avatar", recurso);
+            } catch (java.io.IOException e) {
+                throw new IllegalStateException(
+                        "No se pudo leer el archivo de avatar", e);
+            }
+        }
+
         restClient.post()
                 .uri("/api/perfil")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of(
-                        "nombre", nombre,
-                        "nombreUsuario", nombreUsuario,
-                        "avatar", avatar,
-                        "juegosFavoritos", juegosFavoritos,
-                        "notificaciones", notificaciones))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(body)
                 .retrieve()
                 .toBodilessEntity();
     }

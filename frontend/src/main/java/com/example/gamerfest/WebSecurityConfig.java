@@ -41,7 +41,7 @@ public class WebSecurityConfig {
                                 "default-src 'self'; "
                                         + "script-src 'self'; "
                                         + "style-src 'self'; "
-                                        + "img-src 'self' data:; "
+                                        + "img-src 'self' data: http://localhost:8081 http://127.0.0.1:8081; "
                                         + "font-src 'self'; "
                                         + "connect-src 'self'; "
                                         + "frame-ancestors 'none'; "

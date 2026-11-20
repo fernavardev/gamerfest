@@ -9,11 +9,14 @@ RUN mvn -B -DskipTests package
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-RUN groupadd --system app && useradd --system --gid app --no-create-home app
+RUN groupadd --system app && useradd --system --gid app --no-create-home app \
+    && mkdir -p /app/uploads && chown app:app /app/uploads
 
 COPY --from=build --chown=app:app /app/target/*.jar app.jar
 
 USER app
+
+ENV GAMERFEST_UPLOAD_DIR=/app/uploads
 
 EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]

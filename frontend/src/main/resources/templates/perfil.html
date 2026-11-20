@@ -15,10 +15,10 @@
         <div class="profile-layout" th:if="${perfil != null}">
             <section class="panel">
                 <h2>Tu perfil</h2>
-                <div th:if="${perfil.avatar != null and !perfil.avatar.isBlank()}">
-                    <img class="avatar" th:src="${perfil.avatar}" alt="Avatar del usuario">
+                <div th:if="${avatarUrl != null and !avatarUrl.isBlank()}">
+                    <img class="avatar" th:src="${avatarUrl}" alt="Avatar del usuario">
                 </div>
-                <div class="avatar-placeholder" th:if="${perfil.avatar == null or perfil.avatar.isBlank()}">
+                <div class="avatar-placeholder" th:if="${avatarUrl == null or avatarUrl.isBlank()}">
                     Sin avatar
                 </div>
                 <p style="margin-top: 1rem;"><strong style="color: var(--ink);">Nombre:</strong>
@@ -35,7 +35,7 @@
 
             <section class="panel">
                 <h2>Editar perfil</h2>
-                <form th:action="@{/perfil}" method="post" class="form-stack">
+                <form th:action="@{/perfil}" method="post" enctype="multipart/form-data" class="form-stack">
                     <div class="form-field">
                         <label for="nombre">Nombre</label>
                         <input type="text" id="nombre" name="nombre" th:value="${perfil.nombre}" required>
@@ -46,9 +46,9 @@
                                th:value="${perfil.nombreUsuario}" required>
                     </div>
                     <div class="form-field">
-                        <label for="avatar">Avatar (URL de imagen)</label>
-                        <input type="url" id="avatar" name="avatar" th:value="${perfil.avatar}"
-                               placeholder="https://...">
+                        <label for="avatar">Avatar (imagen)</label>
+                        <input type="file" id="avatar" name="avatar"
+                               accept="image/jpeg,image/png,image/webp">
                     </div>
                     <div class="form-field">
                         <label for="juegosFavoritos">Juegos favoritos</label>
@@ -58,6 +58,7 @@
                     </div>
                     <div class="form-field form-field--check">
                         <input type="checkbox" id="notificaciones" name="notificaciones"
+                               value="true"
                                th:checked="${perfil.notificaciones}">
                         <label for="notificaciones">Recibir notificaciones</label>
                     </div>
