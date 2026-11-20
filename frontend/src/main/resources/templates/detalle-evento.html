@@ -109,24 +109,7 @@
         <section class="section" th:if="${esDueno and compartir != null}" style="margin-top: 2rem;">
             <h2>Compartir evento</h2>
             <p class="section__intro">Difunde tu evento en el sitio o en redes.</p>
-            <div class="btn-group share-actions">
-                <a class="btn btn--ghost"
-                   th:href="${compartir.webUrl}"
-                   target="_blank"
-                   rel="noopener noreferrer">Link del sitio</a>
-                <a class="btn btn--ghost"
-                   th:href="${compartir.twitter}"
-                   target="_blank"
-                   rel="noopener noreferrer">X / Twitter</a>
-                <a class="btn btn--ghost"
-                   th:href="${compartir.facebook}"
-                   target="_blank"
-                   rel="noopener noreferrer">Facebook</a>
-                <a class="btn btn--ghost"
-                   th:href="${compartir.whatsapp}"
-                   target="_blank"
-                   rel="noopener noreferrer">WhatsApp</a>
-            </div>
+            <div th:replace="~{fragments/share :: shareActions(${compartir})}"></div>
         </section>
 
         <p style="margin-top: 1.5rem;">
