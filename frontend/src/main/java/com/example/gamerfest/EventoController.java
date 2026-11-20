@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,6 +62,7 @@ public class EventoController {
     public String detalleEvento(
             @PathVariable Long id,
             HttpSession session,
+            Authentication authentication,
             Model model) {
 
         Evento evento = backendApiClient.buscarEventoPorId(session, id);
@@ -85,10 +87,23 @@ public class EventoController {
                             .orElse(0) * 10.0) / 10.0;
         }
 
+        boolean esDueno = authentication != null
+                && authentication.isAuthenticated()
+                && evento.getPublicadorEmail() != null
+                && evento.getPublicadorEmail()
+                        .equalsIgnoreCase(authentication.getName());
+
+        EnlacesCompartir compartir = null;
+        if (esDueno) {
+            compartir = backendApiClient.obtenerEnlacesCompartir(session, id);
+        }
+
         model.addAttribute("evento", evento);
         model.addAttribute("media", media);
         model.addAttribute("comentarios", comentarios);
         model.addAttribute("promedioValoracion", promedio);
+        model.addAttribute("esDueno", esDueno);
+        model.addAttribute("compartir", compartir);
 
         return "detalle-evento";
     }

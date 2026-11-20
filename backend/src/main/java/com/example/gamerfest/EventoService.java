@@ -1,10 +1,13 @@
 package com.example.gamerfest;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,16 +20,21 @@ public class EventoService {
     private final EventoMediaRepository eventoMediaRepository;
     private final ComentarioEventoRepository comentarioEventoRepository;
     private final AlmacenamientoService almacenamientoService;
+    private final String frontendBaseUrl;
 
     public EventoService(
             EventoRepository eventoRepository,
             EventoMediaRepository eventoMediaRepository,
             ComentarioEventoRepository comentarioEventoRepository,
-            AlmacenamientoService almacenamientoService) {
+            AlmacenamientoService almacenamientoService,
+            @Value("${gamerfest.frontend-base-url}") String frontendBaseUrl) {
         this.eventoRepository = eventoRepository;
         this.eventoMediaRepository = eventoMediaRepository;
         this.comentarioEventoRepository = comentarioEventoRepository;
         this.almacenamientoService = almacenamientoService;
+        this.frontendBaseUrl = frontendBaseUrl.endsWith("/")
+                ? frontendBaseUrl.substring(0, frontendBaseUrl.length() - 1)
+                : frontendBaseUrl;
     }
 
     public List<Evento> listarTodos() {
@@ -169,6 +177,22 @@ public class EventoService {
                 valoracion);
 
         return comentarioEventoRepository.save(comentario);
+    }
+
+    public EnlacesCompartir generarEnlacesCompartir(Long eventoId, String email) {
+        Evento evento = exigirEvento(eventoId);
+        exigirEsDueno(evento, email);
+
+        String webUrl = frontendBaseUrl + "/eventos/" + evento.getId();
+        String texto = "Mira este evento en GamerFest: " + evento.getNombre();
+        String encodedUrl = URLEncoder.encode(webUrl, StandardCharsets.UTF_8);
+        String encodedText = URLEncoder.encode(texto, StandardCharsets.UTF_8);
+
+        return new EnlacesCompartir(
+                webUrl,
+                "https://twitter.com/intent/tweet?text=" + encodedText + "&url=" + encodedUrl,
+                "https://www.facebook.com/sharer/sharer.php?u=" + encodedUrl,
+                "https://wa.me/?text=" + encodedText + "%20" + encodedUrl);
     }
 
     public void inicializarEventos() {

@@ -257,6 +257,19 @@ public class BackendApiClient {
                 .body(ComentarioEvento.class);
     }
 
+    public EnlacesCompartir obtenerEnlacesCompartir(
+            HttpSession session,
+            Long eventoId) {
+
+        String token = tokenStore.requireToken(session);
+
+        return restClient.get()
+                .uri("/api/eventos/{id}/compartir", eventoId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .retrieve()
+                .body(EnlacesCompartir.class);
+    }
+
     public void actualizarPerfil(
             HttpSession session,
             String nombre,

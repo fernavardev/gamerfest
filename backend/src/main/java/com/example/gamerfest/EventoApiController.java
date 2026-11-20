@@ -110,4 +110,13 @@ public class EventoApiController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(comentario);
     }
+
+    @GetMapping("/{id}/compartir")
+    public EnlacesCompartir compartirEvento(
+            Authentication authentication,
+            @PathVariable Long id) {
+
+        return eventoService.generarEnlacesCompartir(
+                id, authentication.getName());
+    }
 }

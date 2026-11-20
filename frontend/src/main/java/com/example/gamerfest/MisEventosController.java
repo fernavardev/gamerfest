@@ -37,6 +37,7 @@ public class MisEventosController {
     public String misEventos(HttpSession session, Model model) {
         List<Evento> eventos = backendApiClient.listarMisEventos(session);
         Map<Long, List<EventoMediaVista>> mediaPorEvento = new LinkedHashMap<>();
+        Map<Long, EnlacesCompartir> compartirPorEvento = new LinkedHashMap<>();
 
         for (Evento evento : eventos) {
             List<EventoMediaVista> vistas = new ArrayList<>();
@@ -44,10 +45,14 @@ public class MisEventosController {
                 vistas.add(new EventoMediaVista(media, urlPublica(media.getRuta())));
             }
             mediaPorEvento.put(evento.getId(), vistas);
+            compartirPorEvento.put(
+                    evento.getId(),
+                    backendApiClient.obtenerEnlacesCompartir(session, evento.getId()));
         }
 
         model.addAttribute("eventos", eventos);
         model.addAttribute("mediaPorEvento", mediaPorEvento);
+        model.addAttribute("compartirPorEvento", compartirPorEvento);
         return "mis-eventos";
     }
 

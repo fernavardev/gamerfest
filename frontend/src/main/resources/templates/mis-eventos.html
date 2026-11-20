@@ -30,7 +30,33 @@
                         <span th:text="${evento.modalidad}">Modalidad</span>
                     </div>
                     <p th:text="${evento.descripcion}">Descripción</p>
-                    <a class="btn btn--ghost" th:href="@{/eventos/{id}(id=${evento.id})}">Ver detalle</a>
+                    <div class="btn-group">
+                        <a class="btn btn--ghost" th:href="@{/eventos/{id}(id=${evento.id})}">Ver detalle</a>
+                    </div>
+
+                    <div class="share-actions"
+                         th:if="${compartirPorEvento[evento.id] != null}"
+                         style="margin-top: 0.75rem;">
+                        <h4>Compartir</h4>
+                        <div class="btn-group">
+                            <a class="btn btn--ghost"
+                               th:href="${compartirPorEvento[evento.id].webUrl}"
+                               target="_blank"
+                               rel="noopener noreferrer">Sitio</a>
+                            <a class="btn btn--ghost"
+                               th:href="${compartirPorEvento[evento.id].twitter}"
+                               target="_blank"
+                               rel="noopener noreferrer">X</a>
+                            <a class="btn btn--ghost"
+                               th:href="${compartirPorEvento[evento.id].facebook}"
+                               target="_blank"
+                               rel="noopener noreferrer">Facebook</a>
+                            <a class="btn btn--ghost"
+                               th:href="${compartirPorEvento[evento.id].whatsapp}"
+                               target="_blank"
+                               rel="noopener noreferrer">WhatsApp</a>
+                        </div>
+                    </div>
 
                     <div style="margin-top: 1rem;">
                         <h4>Media</h4>
