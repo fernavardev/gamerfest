@@ -1,15 +1,17 @@
 package com.example.gamerfest;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import java.util.Map;
-import org.springframework.http.MediaType;
+
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpHeaders;
 
 @Component
 public class BackendApiClient {
@@ -30,9 +32,44 @@ public class BackendApiClient {
     }
 
     public List<Evento> listarEventos() {
+        return listarEventos(null, null, null, null, null, null, null);
+    }
+
+    public List<Evento> listarEventos(
+            String nombre,
+            String videojuego,
+            String categoria,
+            String pais,
+            String ciudad,
+            LocalDate fecha,
+            String modalidad) {
 
         Evento[] eventos = restClient.get()
-                .uri("/api/eventos")
+                .uri(uriBuilder -> {
+                    uriBuilder.path("/api/eventos");
+                    if (nombre != null && !nombre.isBlank()) {
+                        uriBuilder.queryParam("nombre", nombre.trim());
+                    }
+                    if (videojuego != null && !videojuego.isBlank()) {
+                        uriBuilder.queryParam("videojuego", videojuego.trim());
+                    }
+                    if (categoria != null && !categoria.isBlank()) {
+                        uriBuilder.queryParam("categoria", categoria.trim());
+                    }
+                    if (pais != null && !pais.isBlank()) {
+                        uriBuilder.queryParam("pais", pais.trim());
+                    }
+                    if (ciudad != null && !ciudad.isBlank()) {
+                        uriBuilder.queryParam("ciudad", ciudad.trim());
+                    }
+                    if (fecha != null) {
+                        uriBuilder.queryParam("fecha", fecha.toString());
+                    }
+                    if (modalidad != null && !modalidad.isBlank()) {
+                        uriBuilder.queryParam("modalidad", modalidad.trim());
+                    }
+                    return uriBuilder.build();
+                })
                 .retrieve()
                 .body(Evento[].class);
 

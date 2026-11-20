@@ -21,41 +21,28 @@ public class EventoController {
 
     @GetMapping("/eventos")
     public String listarEventos(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String videojuego,
             @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String pais,
+            @RequestParam(required = false) String ciudad,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate fecha,
-            @RequestParam(required = false) String ciudad,
+            @RequestParam(required = false) String modalidad,
             Model model) {
 
-        List<Evento> resultados = backendApiClient.listarEventos();
-
-        if (categoria != null && !categoria.isBlank()) {
-            resultados = resultados.stream()
-                    .filter(evento -> evento.getCategoria()
-                            .equalsIgnoreCase(categoria))
-                    .toList();
-        }
-
-        if (fecha != null) {
-            resultados = resultados.stream()
-                    .filter(evento -> evento.getFecha().equals(fecha))
-                    .toList();
-        }
-
-        if (ciudad != null && !ciudad.isBlank()) {
-            resultados = resultados.stream()
-                    .filter(evento -> evento.getCiudad() != null
-                            && evento.getCiudad()
-                                    .toLowerCase()
-                                    .contains(ciudad.trim().toLowerCase()))
-                    .toList();
-        }
+        List<Evento> resultados = backendApiClient.listarEventos(
+                nombre, videojuego, categoria, pais, ciudad, fecha, modalidad);
 
         model.addAttribute("eventos", resultados);
+        model.addAttribute("nombre", nombre);
+        model.addAttribute("videojuego", videojuego);
         model.addAttribute("categoria", categoria);
-        model.addAttribute("fecha", fecha);
+        model.addAttribute("pais", pais);
         model.addAttribute("ciudad", ciudad);
+        model.addAttribute("fecha", fecha);
+        model.addAttribute("modalidad", modalidad);
 
         return "eventos";
     }

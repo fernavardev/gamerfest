@@ -11,11 +11,21 @@
     <div class="container">
         <section class="section">
             <h1>Eventos GamerFest</h1>
-            <p class="section__intro">Filtra por categoría, fecha o ciudad y revisa el detalle de cada evento.</p>
+            <p class="section__intro">Busca y filtra por nombre, videojuego, categoría, país, ciudad, fecha o modalidad.</p>
 
             <form th:action="@{/eventos}" method="get" class="panel form-filters">
                 <div class="form-field">
-                    <label for="categoria">Categoría</label>
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre"
+                           th:value="${nombre}" placeholder="Ej.: GamerFest">
+                </div>
+                <div class="form-field">
+                    <label for="videojuego">Videojuego</label>
+                    <input type="text" id="videojuego" name="videojuego"
+                           th:value="${videojuego}" placeholder="Ej.: Valorant">
+                </div>
+                <div class="form-field">
+                    <label for="categoria">Categoría / tipo</label>
                     <select id="categoria" name="categoria">
                         <option value="">Todas las categorías</option>
                         <option value="Videojuegos" th:selected="${categoria == 'Videojuegos'}">Videojuegos</option>
@@ -24,13 +34,26 @@
                     </select>
                 </div>
                 <div class="form-field">
-                    <label for="fecha">Fecha</label>
-                    <input type="date" id="fecha" name="fecha" th:value="${fecha}">
+                    <label for="pais">País</label>
+                    <input type="text" id="pais" name="pais"
+                           th:value="${pais}" placeholder="Ej.: Chile">
                 </div>
                 <div class="form-field">
                     <label for="ciudad">Ciudad</label>
                     <input type="text" id="ciudad" name="ciudad"
                            th:value="${ciudad}" placeholder="Ej.: Santiago">
+                </div>
+                <div class="form-field">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" th:value="${fecha}">
+                </div>
+                <div class="form-field">
+                    <label for="modalidad">Modalidad</label>
+                    <select id="modalidad" name="modalidad">
+                        <option value="">Todas</option>
+                        <option value="PRESENCIAL" th:selected="${modalidad == 'PRESENCIAL'}">Presencial</option>
+                        <option value="ONLINE" th:selected="${modalidad == 'ONLINE'}">Online</option>
+                    </select>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn--primary">Buscar</button>
@@ -47,7 +70,12 @@
                     <div class="card__meta">
                         <span th:text="${evento.fecha}">Fecha</span>
                         <span th:text="${evento.ciudad}">Ciudad</span>
+                        <span th:text="${evento.modalidad}">Modalidad</span>
                     </div>
+                    <p th:if="${evento.videojuego != null and !evento.videojuego.isBlank()}">
+                        <strong>Juego:</strong>
+                        <span th:text="${evento.videojuego}"></span>
+                    </p>
                     <a class="btn btn--ghost" th:href="@{/eventos/{id}(id=${evento.id})}">Ver detalle</a>
                 </article>
             </div>
