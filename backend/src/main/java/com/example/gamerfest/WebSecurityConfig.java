@@ -2,6 +2,7 @@ package com.example.gamerfest;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,12 +26,8 @@ public class WebSecurityConfig {
                 .userDetailsService(userDetailsService)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/login",
-                                "/registro",
-                                "/api/eventos",
-                                "/api/eventos/**")
-                        .permitAll()
+                        .requestMatchers("/login", "/registro").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/eventos").permitAll()
                         .anyRequest().authenticated())
 
                 .formLogin(form -> form.disable())

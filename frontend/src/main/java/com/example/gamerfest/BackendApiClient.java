@@ -76,11 +76,14 @@ public class BackendApiClient {
         return eventos == null ? List.of() : Arrays.asList(eventos);
     }
 
-    public Evento buscarEventoPorId(Long id) {
+    public Evento buscarEventoPorId(HttpSession session, Long id) {
+
+        String token = tokenStore.requireToken(session);
 
         try {
             return restClient.get()
                     .uri("/api/eventos/{id}", id)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .retrieve()
                     .body(Evento.class);
 

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class EventoController {
 
@@ -50,9 +52,10 @@ public class EventoController {
     @GetMapping("/eventos/{id}")
     public String detalleEvento(
             @PathVariable Long id,
+            HttpSession session,
             Model model) {
 
-        Evento evento = backendApiClient.buscarEventoPorId(id);
+        Evento evento = backendApiClient.buscarEventoPorId(session, id);
 
         if (evento == null) {
             return "redirect:/eventos";
