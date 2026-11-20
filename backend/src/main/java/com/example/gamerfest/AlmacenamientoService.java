@@ -34,34 +34,43 @@ public class AlmacenamientoService {
     }
 
     public String guardarImagen(MultipartFile archivo) {
-        return guardar(archivo, TIPOS_IMAGEN);
+        String contentType = contentTypeNormalizado(archivo);
+        if (!TIPOS_IMAGEN.contains(contentType)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Tipo de imagen no permitido: " + contentType);
+        }
+        return guardarArchivo(archivo);
     }
 
-    public String guardarMedia(MultipartFile archivo, TipoMedia tipo) {
-        if (tipo == TipoMedia.FOTO) {
-            return guardar(archivo, TIPOS_IMAGEN);
+    public String guardarMedia(MultipartFile archivo) {
+        String contentType = contentTypeNormalizado(archivo);
+        if (!TIPOS_IMAGEN.contains(contentType)
+                && !TIPOS_VIDEO.contains(contentType)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Tipo de archivo no permitido: " + contentType
+                            + ". Usá JPG, PNG, WebP, MP4 o WebM.");
         }
-        if (tipo == TipoMedia.VIDEO) {
-            return guardar(archivo, TIPOS_VIDEO);
-        }
-        throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Tipo de media no soportado");
+        return guardarArchivo(archivo);
     }
 
-    private String guardar(MultipartFile archivo, Set<String> tiposPermitidos) {
+    private String contentTypeNormalizado(MultipartFile archivo) {
         if (archivo == null || archivo.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "El archivo es obligatorio");
         }
 
         String contentType = archivo.getContentType();
-        if (contentType == null
-                || !tiposPermitidos.contains(contentType.toLowerCase(Locale.ROOT))) {
+        if (contentType == null || contentType.isBlank()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Tipo de archivo no permitido: " + contentType);
+                    HttpStatus.BAD_REQUEST, "No se pudo determinar el tipo de archivo");
         }
 
+        return contentType.toLowerCase(Locale.ROOT);
+    }
+
+    private String guardarArchivo(MultipartFile archivo) {
         String extension = extensionDesdeNombre(archivo.getOriginalFilename());
         String nombreArchivo = UUID.randomUUID() + extension;
         Path destino = directorioBase.resolve(nombreArchivo).normalize();

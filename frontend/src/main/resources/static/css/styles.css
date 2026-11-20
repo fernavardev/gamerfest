@@ -512,6 +512,36 @@ p { margin: 0 0 1rem; color: var(--muted); }
   }
 }
 
+.media-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  margin: 0.75rem 0;
+}
+
+.media-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.media-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(154, 171, 196, 0.35);
+  background: var(--bg-elevated);
+}
+
+.media-grid--detalle {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.media-thumb--detalle {
+  aspect-ratio: 16 / 10;
+}
+
 .avatar {
   width: 120px;
   height: 120px;

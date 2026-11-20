@@ -1,9 +1,9 @@
 package com.example.gamerfest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,13 +20,10 @@ public class EventoMedia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "evento_id", nullable = false)
     private Evento evento;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoMedia tipo;
 
     @Column(nullable = false)
     private String ruta;
@@ -40,12 +37,10 @@ public class EventoMedia {
 
     public EventoMedia(
             Evento evento,
-            TipoMedia tipo,
             String ruta,
             String nombreOriginal,
             String contentType) {
         this.evento = evento;
-        this.tipo = tipo;
         this.ruta = ruta;
         this.nombreOriginal = nombreOriginal;
         this.contentType = contentType;
@@ -65,14 +60,6 @@ public class EventoMedia {
 
     public void setEvento(Evento evento) {
         this.evento = evento;
-    }
-
-    public TipoMedia getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoMedia tipo) {
-        this.tipo = tipo;
     }
 
     public String getRuta() {

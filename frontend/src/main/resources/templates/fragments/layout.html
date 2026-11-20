@@ -13,7 +13,8 @@
         <a th:href="@{/home}" class="brand">Gamer<span>Fest</span></a>
         <nav class="nav" aria-label="Principal">
             <a th:href="@{/home}">Inicio</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/eventos}">Eventos</a>
+            <a th:href="@{/eventos}">Eventos</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/mis-eventos}">Mis eventos</a>
             <a sec:authorize="isAuthenticated()" th:href="@{/perfil}">Mi perfil</a>
             <a sec:authorize="!isAuthenticated()" th:href="@{/registro}">Registrarse</a>
             <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Iniciar sesión</a>

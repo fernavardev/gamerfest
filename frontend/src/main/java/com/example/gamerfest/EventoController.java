@@ -1,8 +1,10 @@
 package com.example.gamerfest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,9 +18,13 @@ import jakarta.servlet.http.HttpSession;
 public class EventoController {
 
     private final BackendApiClient backendApiClient;
+    private final String backendPublicUrl;
 
-    public EventoController(BackendApiClient backendApiClient) {
+    public EventoController(
+            BackendApiClient backendApiClient,
+            @Value("${backend.public-url}") String backendPublicUrl) {
         this.backendApiClient = backendApiClient;
+        this.backendPublicUrl = backendPublicUrl;
     }
 
     @GetMapping("/eventos")
@@ -61,8 +67,27 @@ public class EventoController {
             return "redirect:/eventos";
         }
 
+        List<EventoMediaVista> media = new ArrayList<>();
+        for (EventoMedia item : backendApiClient.listarMedia(session, id)) {
+            media.add(new EventoMediaVista(item, urlPublica(item.getRuta())));
+        }
+
         model.addAttribute("evento", evento);
+        model.addAttribute("media", media);
 
         return "detalle-evento";
+    }
+
+    private String urlPublica(String ruta) {
+        if (ruta == null || ruta.isBlank()) {
+            return null;
+        }
+        if (ruta.startsWith("http://") || ruta.startsWith("https://")) {
+            return ruta;
+        }
+        String base = backendPublicUrl.endsWith("/")
+                ? backendPublicUrl.substring(0, backendPublicUrl.length() - 1)
+                : backendPublicUrl;
+        return ruta.startsWith("/") ? base + ruta : base + "/" + ruta;
     }
 }

@@ -12,6 +12,22 @@
         <span class="badge" th:text="${evento.categoria}">Categoría</span>
         <h1 th:text="${evento.nombre}">Nombre del evento</h1>
 
+        <section class="section" th:if="${media != null and !media.isEmpty()}" style="margin-top: 1.5rem;">
+            <h2>Fotos y videos</h2>
+            <div class="media-grid media-grid--detalle">
+                <div th:each="item : ${media}" class="media-item">
+                    <img th:if="${item.media.imagen}"
+                         th:src="${item.url}"
+                         th:alt="${item.media.nombreOriginal}"
+                         class="media-thumb media-thumb--detalle">
+                    <video th:if="${item.media.video}"
+                           th:src="${item.url}"
+                           controls
+                           class="media-thumb media-thumb--detalle"></video>
+                </div>
+            </div>
+        </section>
+
         <div class="grid grid--2" style="margin-top: 1.5rem;">
             <section class="panel detail-block">
                 <h2>Información general</h2>

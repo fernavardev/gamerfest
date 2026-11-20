@@ -5,15 +5,25 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EventoService {
 
     private final EventoRepository eventoRepository;
+    private final EventoMediaRepository eventoMediaRepository;
+    private final AlmacenamientoService almacenamientoService;
 
-    public EventoService(EventoRepository eventoRepository) {
+    public EventoService(
+            EventoRepository eventoRepository,
+            EventoMediaRepository eventoMediaRepository,
+            AlmacenamientoService almacenamientoService) {
         this.eventoRepository = eventoRepository;
+        this.eventoMediaRepository = eventoMediaRepository;
+        this.almacenamientoService = almacenamientoService;
     }
 
     public List<Evento> listarTodos() {
@@ -33,8 +43,87 @@ public class EventoService {
                 nombre, videojuego, categoria, pais, ciudad, fecha, modalidad));
     }
 
+    public List<Evento> listarPorPublicador(String publicadorEmail) {
+        return eventoRepository.findByPublicadorEmail(publicadorEmail);
+    }
+
     public Optional<Evento> buscarPorId(Long id) {
         return eventoRepository.findById(id);
+    }
+
+    public Evento crear(Evento datos, String publicadorEmail) {
+        Evento evento = new Evento(
+                datos.getNombre(),
+                datos.getCategoria(),
+                datos.getFecha(),
+                datos.getHora(),
+                datos.getDireccion(),
+                datos.getDescripcion(),
+                datos.getOrganizador(),
+                datos.getServicios(),
+                datos.getExpositores(),
+                datos.isDestacado(),
+                publicadorEmail,
+                datos.getVideojuego(),
+                datos.getPais(),
+                datos.getCiudad(),
+                datos.getModalidad());
+
+        return eventoRepository.save(evento);
+    }
+
+    public Evento exigirEvento(Long id) {
+        return eventoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Evento no encontrado"));
+    }
+
+    public void exigirEsDueno(Evento evento, String email) {
+        if (evento.getPublicadorEmail() == null
+                || !evento.getPublicadorEmail().equalsIgnoreCase(email)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "No tenés permiso sobre este evento");
+        }
+    }
+
+    public List<EventoMedia> listarMedia(Long eventoId) {
+        exigirEvento(eventoId);
+        return eventoMediaRepository.findByEventoId(eventoId);
+    }
+
+    public EventoMedia agregarMedia(
+            Long eventoId,
+            String email,
+            MultipartFile archivo) {
+
+        Evento evento = exigirEvento(eventoId);
+        exigirEsDueno(evento, email);
+
+        String ruta = almacenamientoService.guardarMedia(archivo);
+        EventoMedia media = new EventoMedia(
+                evento,
+                ruta,
+                archivo.getOriginalFilename(),
+                archivo.getContentType());
+
+        return eventoMediaRepository.save(media);
+    }
+
+    public void eliminarMedia(Long eventoId, Long mediaId, String email) {
+        Evento evento = exigirEvento(eventoId);
+        exigirEsDueno(evento, email);
+
+        EventoMedia media = eventoMediaRepository.findById(mediaId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Media no encontrada"));
+
+        if (media.getEvento() == null
+                || !media.getEvento().getId().equals(eventoId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Media no encontrada");
+        }
+
+        eventoMediaRepository.delete(media);
     }
 
     public void inicializarEventos() {

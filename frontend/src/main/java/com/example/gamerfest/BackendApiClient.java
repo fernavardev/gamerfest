@@ -142,6 +142,87 @@ public class BackendApiClient {
                 .body(PerfilUsuario.class);
     }
 
+    public List<Evento> listarMisEventos(HttpSession session) {
+        String token = tokenStore.requireToken(session);
+
+        Evento[] eventos = restClient.get()
+                .uri("/api/eventos/mios")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .retrieve()
+                .body(Evento[].class);
+
+        return eventos == null ? List.of() : Arrays.asList(eventos);
+    }
+
+    public Evento crearEvento(HttpSession session, Evento evento) {
+        String token = tokenStore.requireToken(session);
+
+        return restClient.post()
+                .uri("/api/eventos")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(evento)
+                .retrieve()
+                .body(Evento.class);
+    }
+
+    public List<EventoMedia> listarMedia(HttpSession session, Long eventoId) {
+        String token = tokenStore.requireToken(session);
+
+        EventoMedia[] media = restClient.get()
+                .uri("/api/eventos/{id}/media", eventoId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .retrieve()
+                .body(EventoMedia[].class);
+
+        return media == null ? List.of() : Arrays.asList(media);
+    }
+
+    public EventoMedia subirMedia(
+            HttpSession session,
+            Long eventoId,
+            MultipartFile archivo) {
+
+        String token = tokenStore.requireToken(session);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+
+        try {
+            ByteArrayResource recurso = new ByteArrayResource(archivo.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return archivo.getOriginalFilename();
+                }
+            };
+            body.add("archivo", recurso);
+        } catch (java.io.IOException e) {
+            throw new IllegalStateException(
+                    "No se pudo leer el archivo de media", e);
+        }
+
+        return restClient.post()
+                .uri("/api/eventos/{id}/media", eventoId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(body)
+                .retrieve()
+                .body(EventoMedia.class);
+    }
+
+    public void eliminarMedia(
+            HttpSession session,
+            Long eventoId,
+            Long mediaId) {
+
+        String token = tokenStore.requireToken(session);
+
+        restClient.delete()
+                .uri("/api/eventos/{id}/media/{mediaId}", eventoId, mediaId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
     public void actualizarPerfil(
             HttpSession session,
             String nombre,
