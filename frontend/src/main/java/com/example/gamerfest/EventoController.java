@@ -1,4 +1,3 @@
-
 package com.example.gamerfest;
 
 import java.time.LocalDate;
@@ -26,7 +25,7 @@ public class EventoController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate fecha,
-            @RequestParam(required = false) String ubicacion,
+            @RequestParam(required = false) String ciudad,
             Model model) {
 
         List<Evento> resultados = backendApiClient.listarEventos();
@@ -44,18 +43,19 @@ public class EventoController {
                     .toList();
         }
 
-        if (ubicacion != null && !ubicacion.isBlank()) {
+        if (ciudad != null && !ciudad.isBlank()) {
             resultados = resultados.stream()
-                    .filter(evento -> evento.getUbicacion()
-                            .toLowerCase()
-                            .contains(ubicacion.trim().toLowerCase()))
+                    .filter(evento -> evento.getCiudad() != null
+                            && evento.getCiudad()
+                                    .toLowerCase()
+                                    .contains(ciudad.trim().toLowerCase()))
                     .toList();
         }
 
         model.addAttribute("eventos", resultados);
         model.addAttribute("categoria", categoria);
         model.addAttribute("fecha", fecha);
-        model.addAttribute("ubicacion", ubicacion);
+        model.addAttribute("ciudad", ciudad);
 
         return "eventos";
     }

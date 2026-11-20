@@ -11,7 +11,7 @@
     <div class="container">
         <section class="section">
             <h1>Eventos GamerFest</h1>
-            <p class="section__intro">Filtra por categoría, fecha o ubicación y revisa el detalle de cada evento.</p>
+            <p class="section__intro">Filtra por categoría, fecha o ciudad y revisa el detalle de cada evento.</p>
 
             <form th:action="@{/eventos}" method="get" class="panel form-filters">
                 <div class="form-field">
@@ -28,9 +28,9 @@
                     <input type="date" id="fecha" name="fecha" th:value="${fecha}">
                 </div>
                 <div class="form-field">
-                    <label for="ubicacion">Ubicación</label>
-                    <input type="text" id="ubicacion" name="ubicacion"
-                           th:value="${ubicacion}" placeholder="Ej.: Santiago">
+                    <label for="ciudad">Ciudad</label>
+                    <input type="text" id="ciudad" name="ciudad"
+                           th:value="${ciudad}" placeholder="Ej.: Santiago">
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn--primary">Buscar</button>
@@ -46,7 +46,7 @@
                     <h2 th:text="${evento.nombre}">Nombre del evento</h2>
                     <div class="card__meta">
                         <span th:text="${evento.fecha}">Fecha</span>
-                        <span th:text="${evento.ubicacion}">Ubicación</span>
+                        <span th:text="${evento.ciudad}">Ciudad</span>
                     </div>
                     <a class="btn btn--ghost" th:href="@{/eventos/{id}(id=${evento.id})}">Ver detalle</a>
                 </article>

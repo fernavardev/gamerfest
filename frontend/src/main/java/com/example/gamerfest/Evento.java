@@ -10,35 +10,19 @@ public class Evento {
     private String categoria;
     private LocalDate fecha;
     private LocalTime hora;
-    private String ubicacion;
     private String direccion;
-
     private String descripcion;
     private String organizador;
-
     private String servicios;
-
     private String expositores;
     private boolean destacado;
+    private String publicadorEmail;
+    private String videojuego;
+    private String pais;
+    private String ciudad;
+    private String modalidad;
 
     public Evento() {
-    }
-
-    public Evento(Long id, String nombre, String categoria, LocalDate fecha, LocalTime hora, String ubicacion,
-            String direccion, String descripcion, String organizador, String servicios, String expositores,
-            boolean destacado) {
-        this.id = id;
-        this.nombre = nombre;
-        this.categoria = categoria;
-        this.fecha = fecha;
-        this.hora = hora;
-        this.ubicacion = ubicacion;
-        this.direccion = direccion;
-        this.descripcion = descripcion;
-        this.organizador = organizador;
-        this.servicios = servicios;
-        this.expositores = expositores;
-        this.destacado = destacado;
     }
 
     public Long getId() {
@@ -79,14 +63,6 @@ public class Evento {
 
     public void setHora(LocalTime hora) {
         this.hora = hora;
-    }
-
-    public String getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
     }
 
     public String getDireccion() {
@@ -137,5 +113,43 @@ public class Evento {
         this.destacado = destacado;
     }
 
-}
+    public String getPublicadorEmail() {
+        return publicadorEmail;
+    }
 
+    public void setPublicadorEmail(String publicadorEmail) {
+        this.publicadorEmail = publicadorEmail;
+    }
+
+    public String getVideojuego() {
+        return videojuego;
+    }
+
+    public void setVideojuego(String videojuego) {
+        this.videojuego = videojuego;
+    }
+
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(String modalidad) {
+        this.modalidad = modalidad;
+    }
+}

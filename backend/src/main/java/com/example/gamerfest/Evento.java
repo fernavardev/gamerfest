@@ -2,22 +2,27 @@ package com.example.gamerfest;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "eventos")
 public class Evento {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
     private String categoria;
     private LocalDate fecha;
     private LocalTime hora;
-    private String ubicacion;
     private String direccion;
     @Column(columnDefinition = "TEXT")
     private String descripcion;
@@ -28,24 +33,48 @@ public class Evento {
     private String expositores;
     private boolean destacado;
 
+    private String publicadorEmail;
+    private String videojuego;
+    private String pais;
+    private String ciudad;
+
+    @Enumerated(EnumType.STRING)
+    private Modalidad modalidad;
+
     public Evento() {
     }
 
-    public Evento(Long id, String nombre, String categoria, LocalDate fecha, LocalTime hora, String ubicacion,
-            String direccion, String descripcion, String organizador, String servicios, String expositores,
-            boolean destacado) {
-        this.id = id;
+    public Evento(
+            String nombre,
+            String categoria,
+            LocalDate fecha,
+            LocalTime hora,
+            String direccion,
+            String descripcion,
+            String organizador,
+            String servicios,
+            String expositores,
+            boolean destacado,
+            String publicadorEmail,
+            String videojuego,
+            String pais,
+            String ciudad,
+            Modalidad modalidad) {
         this.nombre = nombre;
         this.categoria = categoria;
         this.fecha = fecha;
         this.hora = hora;
-        this.ubicacion = ubicacion;
         this.direccion = direccion;
         this.descripcion = descripcion;
         this.organizador = organizador;
         this.servicios = servicios;
         this.expositores = expositores;
         this.destacado = destacado;
+        this.publicadorEmail = publicadorEmail;
+        this.videojuego = videojuego;
+        this.pais = pais;
+        this.ciudad = ciudad;
+        this.modalidad = modalidad;
     }
 
     public Long getId() {
@@ -86,14 +115,6 @@ public class Evento {
 
     public void setHora(LocalTime hora) {
         this.hora = hora;
-    }
-
-    public String getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
     }
 
     public String getDireccion() {
@@ -144,4 +165,43 @@ public class Evento {
         this.destacado = destacado;
     }
 
+    public String getPublicadorEmail() {
+        return publicadorEmail;
+    }
+
+    public void setPublicadorEmail(String publicadorEmail) {
+        this.publicadorEmail = publicadorEmail;
+    }
+
+    public String getVideojuego() {
+        return videojuego;
+    }
+
+    public void setVideojuego(String videojuego) {
+        this.videojuego = videojuego;
+    }
+
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public Modalidad getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(Modalidad modalidad) {
+        this.modalidad = modalidad;
+    }
 }
