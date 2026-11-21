@@ -59,7 +59,7 @@ public class EventoApiController {
     @PostMapping
     public ResponseEntity<Evento> crearEvento(
             Authentication authentication,
-            @RequestBody Evento datos) {
+            @RequestBody EventoRequest datos) {
 
         Evento creado = eventoService.crear(datos, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);

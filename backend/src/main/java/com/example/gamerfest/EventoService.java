@@ -62,7 +62,7 @@ public class EventoService {
         return eventoRepository.findById(id);
     }
 
-    public Evento crear(Evento datos, String publicadorEmail) {
+    public Evento crear(EventoRequest datos, String publicadorEmail) {
         Evento evento = new Evento(
                 datos.getNombre(),
                 datos.getCategoria(),
