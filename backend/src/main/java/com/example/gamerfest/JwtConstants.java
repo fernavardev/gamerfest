@@ -16,6 +16,4 @@ public final class JwtConstants {
 
     public static final long TOKEN_EXPIRATION_TIME = 3_600_000L;
 
-    public static final String TOKEN_SECRET = "GamerFest2026ClaveSecretaJWTParaAutenticacionSegura";
-
 }

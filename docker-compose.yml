@@ -25,6 +25,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/gamerfest
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
       GAMERFEST_FRONTEND_BASE_URL: http://localhost:8080
       GAMERFEST_UPLOAD_DIR: /app/uploads
     volumes:

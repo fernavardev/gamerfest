@@ -6,18 +6,22 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.Claims;
 
 @Service
 public class JwtService {
 
-    private final SecretKey clave = Keys.hmacShaKeyFor(
-            JwtConstants.TOKEN_SECRET.getBytes(StandardCharsets.UTF_8));
+    private final SecretKey clave;
+
+    public JwtService(@Value("${gamerfest.jwt.secret}") String tokenSecret) {
+        this.clave = Keys.hmacShaKeyFor(
+                tokenSecret.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generarToken(Usuario usuario) {
 
