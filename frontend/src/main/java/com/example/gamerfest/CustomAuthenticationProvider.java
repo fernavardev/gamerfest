@@ -38,10 +38,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         try {
-            String token = backendApiClient.login(username, credentials.toString());
+            LoginResponse respuesta = backendApiClient.login(
+                    username, credentials.toString());
 
-            ServletRequestAttributes requestAttributes =
-                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+                    .getRequestAttributes();
 
             if (requestAttributes == null) {
                 throw new AuthenticationServiceException(
@@ -49,12 +50,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             }
 
             HttpServletRequest request = requestAttributes.getRequest();
-            tokenStore.save(request.getSession(true), token);
+            tokenStore.save(request.getSession(true), respuesta.token());
 
             return UsernamePasswordAuthenticationToken.authenticated(
                     username,
                     null,
-                    List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                    List.of(new SimpleGrantedAuthority("ROLE_" + respuesta.rol())));
 
         } catch (RestClientResponseException e) {
             throw new BadCredentialsException("Credenciales incorrectas", e);

@@ -59,6 +59,10 @@ public class Usuario implements UserDetails {
         return rol;
     }
 
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + rol));

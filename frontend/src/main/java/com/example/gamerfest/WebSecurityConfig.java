@@ -26,10 +26,18 @@ public class WebSecurityConfig {
                                 "/fonts/**",
                                 "/images/**")
                         .permitAll()
+                        .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .formLogin(form -> form
+                        .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/home", true)
+                        .successHandler((request, response, authentication) -> {
+
+                                boolean esAdmin = authentication.getAuthorities().stream()
+                                        .anyMatch(authority ->
+                                                authority.getAuthority().equals("ROLE_ADMIN"));
+
+                                response.sendRedirect(esAdmin ? "/admin" : "/home");
+                                })
                         .failureUrl("/login?error")
                         .permitAll())
                 .logout(logout -> logout

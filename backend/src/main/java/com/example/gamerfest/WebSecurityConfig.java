@@ -29,6 +29,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/login", "/registro").permitAll()
                         .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/eventos").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 
                 .formLogin(form -> form.disable())

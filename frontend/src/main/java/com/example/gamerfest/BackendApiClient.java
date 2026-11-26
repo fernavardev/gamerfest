@@ -96,23 +96,29 @@ public class BackendApiClient {
         }
     }
 
-    public String login(String username, String password) {
+    public LoginResponse login(String username, String password) {
 
-        Map<?, ?> respuesta = restClient.post()
+        LoginResponse respuesta = restClient.post()
                 .uri("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Map.of(
                         "username", username,
                         "password", password))
                 .retrieve()
-                .body(Map.class);
+                .body(LoginResponse.class);
 
-        if (respuesta == null || respuesta.get("token") == null) {
+        if (respuesta == null || respuesta.token() == null) {
             throw new IllegalStateException(
                     "El backend no devolvió un token JWT.");
         }
 
-        return respuesta.get("token").toString();
+        if (!"ADMIN".equals(respuesta.rol())
+                && !"USER".equals(respuesta.rol())) {
+            throw new IllegalStateException(
+                    "El backend devolvió un rol no válido.");
+        }
+
+        return respuesta;
     }
 
     public void registrarUsuario(
@@ -307,6 +313,32 @@ public class BackendApiClient {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(body)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    public List<UsuarioResumen> listarUsuarios(HttpSession session) {
+
+        String token = tokenStore.requireToken(session);
+
+        UsuarioResumen[] usuarios = restClient.get()
+                .uri("/api/admin/usuarios")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .retrieve()
+                .body(UsuarioResumen[].class);
+
+        return usuarios == null ? List.of() : Arrays.asList(usuarios);
+    }
+
+    public void cambiarRol(HttpSession session, Long id, String rol) {
+
+        String token = tokenStore.requireToken(session);
+
+        restClient.patch()
+                .uri("/api/admin/usuarios/{id}/rol", id)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of("rol", rol))
                 .retrieve()
                 .toBodilessEntity();
     }

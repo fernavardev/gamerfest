@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>GamerFest - Administración</title>
+</head>
+
+<body>
+
+    <h1>Panel de administración</h1>
+
+    <h2>Gestión de usuarios</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Rol actual</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr th:each="usuario : ${usuarios}">
+
+                <td th:text="${usuario.id()}"></td>
+                <td th:text="${usuario.username()}"></td>
+                <td th:text="${usuario.rol()}"></td>
+
+                <td>
+                    <form
+                        th:action="@{/admin/usuarios/{id}/rol(id=${usuario.id()})}"
+                        method="post">
+
+                        <input type="hidden"
+                            name="rol"
+                            th:value="${usuario.rol() == 'ADMIN' ? 'USER' : 'ADMIN'}">
+
+                        <button type="submit"
+                            th:text="${usuario.rol() == 'ADMIN'
+                                ? 'Quitar administrador'
+                                : 'Hacer administrador'}">
+                        </button>
+
+                    </form>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+
+    <p th:if="${#lists.isEmpty(usuarios)}">
+        No hay otros usuarios registrados.
+    </p>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Cerrar sesión</button>
+    </form>
+
+</body>
+
+</html>
