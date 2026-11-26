@@ -1,64 +1,70 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <title>GamerFest - Administración</title>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Administración')}">
+    <title>Administración</title>
 </head>
-
 <body>
+<div th:replace="~{fragments/layout :: nav}"></div>
 
-    <h1>Panel de administración</h1>
+<main class="site-main">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <h1>Panel de administración</h1>
+                <p class="section__intro">Gestiona roles y permisos de la comunidad GamerFest.</p>
+            </div>
+        </div>
 
-    <h2>Gestión de usuarios</h2>
+        <section class="panel">
+            <h2>Gestión de usuarios</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Usuario</th>
-                <th>Rol actual</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
+            <div class="table-wrap" th:if="${!#lists.isEmpty(usuarios)}">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Rol actual</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="usuario : ${usuarios}">
+                            <td th:text="${usuario.id()}"></td>
+                            <td th:text="${usuario.username()}"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${usuario.rol() == 'ADMIN'} ? ' badge--admin' : ' badge--user'"
+                                      th:text="${usuario.rol()}"></span>
+                            </td>
+                            <td>
+                                <form th:action="@{/admin/usuarios/{id}/rol(id=${usuario.id()})}"
+                                      method="post">
+                                    <input type="hidden"
+                                           name="rol"
+                                           th:value="${usuario.rol() == 'ADMIN' ? 'USER' : 'ADMIN'}">
+                                    <button type="submit"
+                                            th:class="${usuario.rol() == 'ADMIN'} ? 'btn btn--danger' : 'btn btn--primary'"
+                                            style="padding: 0.4rem 0.9rem; font-size: 0.85rem;"
+                                            th:text="${usuario.rol() == 'ADMIN'
+                                                ? 'Quitar administrador'
+                                                : 'Hacer administrador'}">
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <tbody>
-            <tr th:each="usuario : ${usuarios}">
+            <p class="empty-state" th:if="${#lists.isEmpty(usuarios)}">
+                No hay otros usuarios registrados.
+            </p>
+        </section>
+    </div>
+</main>
 
-                <td th:text="${usuario.id()}"></td>
-                <td th:text="${usuario.username()}"></td>
-                <td th:text="${usuario.rol()}"></td>
-
-                <td>
-                    <form
-                        th:action="@{/admin/usuarios/{id}/rol(id=${usuario.id()})}"
-                        method="post">
-
-                        <input type="hidden"
-                            name="rol"
-                            th:value="${usuario.rol() == 'ADMIN' ? 'USER' : 'ADMIN'}">
-
-                        <button type="submit"
-                            th:text="${usuario.rol() == 'ADMIN'
-                                ? 'Quitar administrador'
-                                : 'Hacer administrador'}">
-                        </button>
-
-                    </form>
-                </td>
-
-            </tr>
-        </tbody>
-    </table>
-
-    <p th:if="${#lists.isEmpty(usuarios)}">
-        No hay otros usuarios registrados.
-    </p>
-
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Cerrar sesión</button>
-    </form>
-
+<div th:replace="~{fragments/layout :: footer}"></div>
 </body>
-
 </html>
